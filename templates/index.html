@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing WebApp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>SHREYANSH ENTERPRISES</h1>   
+        <form action="/calculate" method="post">
+            <label for="customer_name">Customer name:</label>
+            <input type="text" id="customer_name" name="customer_name" required>
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" required>
+            <label for="price">Price per item:</label>
+            <input type="number" id="price" name="price" step="0.01" required>
+            <button type="submit">Calculate Total</button>
+        </form>
+        
+    </div>
+    
+</body>
+</html>

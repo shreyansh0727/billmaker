@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Receipt</h1>
+        <form action="/print_receipt" method="post">
+            <input type="text" id="customer_name" name="customer_name" value="{{ customer_name }}">
+            <input type="hidden" id="quantity" name="quantity" value="{{ quantity }}">
+            <input type="hidden" id="price" name="price" value="{{ price }}">
+            <input type="hidden" id="total" name="total" value="{{ total }}">
+            <input type="hidden" id="current_date_time" name="current_date_time" value="{{ current_date_time }}">
+            <input type="hidden" id="receipt_number" name="receipt_number" value="{{ receipt_number }}">
+            <button type="submit">Print Receipt</button>
+        </form>
+        <div class="result">
+            <p>Customer Name: {{ customer_name }}</p>
+            <p>Date & Time: {{ current_date_time }}</p>
+            <p>Receipt Number: {{ receipt_number }}</p>
+            <h2>Total: ₹{{ total }}</h2>
+        </div>
+    </div>
+</body>
+</html>
