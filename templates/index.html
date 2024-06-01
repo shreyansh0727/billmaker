@@ -3,23 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Billing WebApp</title>
+    <title>Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <form action="/logout" method="post" class="logout-form" onsubmit="return confirmLogout()">
+        <button type="submit" class="logout-button">Logout</button>
+    </form>
     <div class="container">
-        <h1>SHREYANSH ENTERPRISES</h1>   
+        <h1>Welcome to the Billing WebApp</h1>
         <form action="/calculate" method="post">
-            <label for="customer_name">Customer name:</label>
-            <input type="text" id="customer_name" name="customer_name" required>
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" required>
-            <label for="price">Price per item:</label>
-            <input type="number" id="price" name="price" step="0.01" required>
-            <button type="submit">Calculate Total</button>
+            <div class="form-group">
+                <label for="customer_name">Customer Name:</label>
+                <input type="text" id="customer_name" name="customer_name" required>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" step="0.01" id="price" name="price" required>
+            </div>
+            <button type="submit" class="calculate-button">Calculate</button>
         </form>
-        
     </div>
-    
+    <script>
+        
+        function confirmLogout() {
+            return confirm("Are you sure you want to logout?");
+        }
+    </script>
 </body>
 </html>
