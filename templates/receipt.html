@@ -7,23 +7,39 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Receipt</h1>
-        <form action="/print_receipt" method="post">
-            <input type="text" id="customer_name" name="customer_name" value="{{ customer_name }}">
+   
+       
+            <input type="hidden" id="customer_name" name="customer_name" value="{{ customer_name }}">
+            <input type="hidden" id="product_name" name="product_name" value="{{ product_name }}">
             <input type="hidden" id="quantity" name="quantity" value="{{ quantity }}">
             <input type="hidden" id="price" name="price" value="{{ price }}">
             <input type="hidden" id="total" name="total" value="{{ total }}">
             <input type="hidden" id="current_date_time" name="current_date_time" value="{{ current_date_time }}">
             <input type="hidden" id="receipt_number" name="receipt_number" value="{{ receipt_number }}">
-            <button type="submit">Print Receipt</button>
-        </form>
-        <div class="result">
-            <p>Customer Name: {{ customer_name }}</p>
-            <p>Date & Time: {{ current_date_time }}</p>
-            <p>Receipt Number: {{ receipt_number }}</p>
-            <h2>Total: ₹{{ total }}</h2>
-        </div>
-    </div>
+        
+           
+            <div class="container">
+                <h2>SHREYANSH ENTERPRISES</h2> 
+                <p>GSTIN: 09EVAPK6897Q1ZE</p>
+                <p>Receipt Number: {{ receipt_number }}</p>
+                <p>Date & Time: {{ current_date_time }}</p>
+                
+                    
+                    <p>Customer Name: {{ customer_name }}</p>
+                    <p>Product Name: {{ product_name }}</p>
+                    <p>Quantity: {{ quantity }}</p>
+                    <p>Price per item: ₹{{ price }}</p>
+                    <p>Total: ₹{{ total }}</p>
+                    <div style="position: relative; width: 100%; height: 0; padding-top: 100.0000%;
+                    padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
+                    border-radius: 8px; will-change: transform;">
+                     <img src="{{ url_for('static', filename='img/ENTERPRISES.png') }}" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;">
+                   </div>
+                  
+                   <P>Thank You,Visit Again</P>
+               </div>
+                   
+                    
+       
 </body>
 </html>
