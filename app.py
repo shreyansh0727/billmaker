@@ -15,6 +15,8 @@ app = Flask(__name__)
 # Set the secret key from the environment variable
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'default_secret_key')  # 'default_secret_key' is used if the environment variable is not set
 
+app.config['SESSION_PERMANENT'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=1)  # Adjust the lifetime as needed
 
 # Get admin credentials from environment variables
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
@@ -54,6 +56,7 @@ def login():
             flash('Invalid credentials')
     return render_template('login.html')
 
+
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
@@ -61,52 +64,57 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route('/')
-@login_required
 def index():
     return render_template('index.html')
+
 
 @app.route('/calculate', methods=['POST'])
 @login_required
 def calculate():
-    if request.method == 'POST':
-        customer_name = request.form['customer_name']
-        quantity = int(request.form['quantity'])
-        price = float(request.form['price'])
-        total = quantity * price
-        current_date_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        receipt_number = int(generate_receipt_number())
-        receipt_data = {
-            'customer_name': customer_name,
-            'quantity': quantity,
-            'price': price,
-            'total': total,
-            'current_date_time': current_date_time,
-            'receipt_number': receipt_number
-        }
-        db.collection('receipts').add(receipt_data)
-        return render_template('receipt.html', customer_name=customer_name, quantity=quantity, price=price, total=total, receipt_number=receipt_number, current_date_time=current_date_time)
+        if request.method == 'POST':
+            customer_name = request.form['customer_name']
+            product_id = request.form['product_id']
+            quantity = int(request.form['quantity'])
 
-@app.route('/print_receipt', methods=['POST'])
-@login_required
-def print_receipt():
-    if request.method == 'POST':
-        customer_name = request.form['customer_name']
-        quantity = int(request.form['quantity'])
-        price = float(request.form['price'])
-        total = float(request.form['total'])
-        current_date_time = request.form['current_date_time']
-        receipt_number = int(request.form['receipt_number'])
-        return render_template('print_receipt.html', customer_name=customer_name, quantity=quantity, price=price, total=total, current_date_time=current_date_time, receipt_number=receipt_number)
+            # Fetch product details from Firestore
+            product_ref = db.collection('products').document(product_id)
+            product = product_ref.get()
+            if not product.exists:
+                return "Product not found"
 
-@app.route('/search_receipt/<int:receipt_number>')
-@login_required
-def search_receipt(receipt_number):
-    receipt_ref = db.collection('receipts').where('receipt_number', '==', receipt_number).get()
-    if receipt_ref:
-        receipt_data = receipt_ref[0].to_dict()
-        return render_template('findreceipt.html', **receipt_data)
-    else:
-        return "Receipt not found"
+            product_data = product.to_dict()
+            price = product_data['price']
+            total = quantity * price
+            current_date_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            receipt_number = int(generate_receipt_number())
+
+            # Ensure the quantity is an integer
+            product_quantity = int(product_data['quantity'])
+
+            # Save receipt details to Firebase
+            receipt_data = {
+                'customer_name': customer_name,
+                'product_id': product_id,
+                'product_name': product_data['name'],
+                'quantity': quantity,
+                'price': price,
+                'total': total,
+                'current_date_time': current_date_time,
+                'receipt_number': receipt_number
+            }
+            db.collection('receipts').add(receipt_data)
+
+            # Update product quantity in Firestore
+            new_quantity = product_quantity - quantity
+            if new_quantity < 0:
+                return "Insufficient product quantity"
+            product_ref.update({'quantity': new_quantity})
+
+            return render_template('receipt.html', customer_name=customer_name, product_name=product_data['name'], quantity=quantity, price=price, total=total, receipt_number=receipt_number, current_date_time=current_date_time)
+           
+
+
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
